@@ -2,7 +2,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import './App.css'
 import AppRoutes from './Router'
 
-const App = () => {
+const App: React.FC = () => {
 
   return (
     <>
