@@ -6,7 +6,6 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session;
-use Stripe\Customer;
 use Stripe\Stripe;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -20,7 +19,8 @@ class ProductController extends Controller
 
     public function checkout()
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $secret_key = env('STRIPE_SECRET');
+        Stripe::setApiKey($secret_key);
 
         $products = Product::all();
         $lineItems = [];
@@ -46,7 +46,7 @@ class ProductController extends Controller
             'line_items' => $lineItems,
             'mode' => 'payment',
             'success_url' => route('checkout.success', [], true)."?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => route('checkout.cancel', [], true),
+            'cancel_url' => route('checkout.cancel', [], true)."?session_id={CHECKOUT_SESSION_ID}",
           ]);
 
           $order = new Order();
@@ -63,15 +63,29 @@ class ProductController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $sessionId = $request->get('session_id');
+        
+        try {
+            $session = Session::retrieve($sessionId);   
+            if(!$session) {
+                throw new NotFoundHttpException();
+            }
+    
+            // $customer = Customer::retrieve($session->customer);
+            $customer = $session->customer_details;
 
-        $session = Session::retrieve($sessionId);   
-        if(!$session) {
+            // $order = Order::where('session_id', $session->id)->get();
+            $order = Order::where('session_id', $session->id)->where('status', 'unpaid')->first();
+            if (!$order) {
+                throw new NotFoundHttpException();
+            }
+            $order->status = 'paid';
+            $order->save();
+
+            return view('product.checkout.success', compact('customer'));
+    
+        } catch (\Throwable $th) {
             throw new NotFoundHttpException();
         }
-
-        // $customer = Customer::retrieve($session->customer);
-        $customer = $session->customer_details;
-        return view('product.checkout.success', compact('customer'));
     }
 
     public function cancel(Request $request)
@@ -83,6 +97,49 @@ class ProductController extends Controller
     {
         $orders = Order::all();
         return view('order.index', compact('orders'));
+    }
+
+    public function webhook()
+    {
+        // whsec_2f04ff869f00a7259eca6c504c1af130b364bf98ecf8f4c53b2f2d38d5605e69v
+
+        // The library needs to be configured with your account's secret key.
+        // Ensure the key is kept out of any version control system you might be using.
+        
+        // $stripe = new \Stripe\StripeClient('sk_test_...');
+        // Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        // This is your Stripe CLI webhook secret for testing your endpoint locally.
+        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
+
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $event = null;
+
+        try {
+          $event = \Stripe\Webhook::constructEvent(
+            $payload, $sig_header, $endpoint_secret
+          );
+        } catch(\UnexpectedValueException $e) {
+          // Invalid payload
+            return response('', 400);
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+          // Invalid signature
+          return response('', 400);
+        }
+
+        // Handle the event
+        switch ($event->type) {
+        //   case 'payment_intent.succeeded':
+            case 'checkout.session.completed':
+            $paymentIntent = $event->data->object;
+          // ... handle other event types
+          default:
+            echo 'Received unknown event type ' . $event->type;
+        }
+
+        return response('');
+    
     }
 
 }
