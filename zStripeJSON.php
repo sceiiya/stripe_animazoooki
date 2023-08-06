@@ -1,0 +1,72 @@
+Stripe\Checkout\Session JSON:
+
+{ 
+    "id": "cs_test_b190UPdA3MnyHUsgCrZI1rtHbOb5cGTv0ta7BMu46hCn55zOVtuV8Ya4w9", 
+    "object": "checkout.session", 
+    "after_expiration": null, 
+    "allow_promotion_codes": null, 
+    "amount_subtotal": 137058, 
+    "amount_total": 137058, 
+    "automatic_tax": { "enabled": false, "status": null }, 
+    "billing_address_collection": null, 
+    "cancel_url": "http:\/\/192.168.100.4:8000\/cancel", 
+    "client_reference_id": null, 
+    "consent": null, 
+    "consent_collection": null, 
+    "created": 1691295132, 
+    "currency": "usd", 
+    "currency_conversion": null, 
+    "custom_fields": [], 
+    "custom_text": { "shipping_address": null, "submit": null }, 
+    "customer": null, 
+    "customer_creation": "if_required", 
+    "customer_details": { 
+        "address": { "city": null, 
+            "country": "PH", 
+            "line1": null, 
+            "line2": null, 
+            "postal_code": null, 
+            "state": null 
+        }, 
+        "email": "coronapungal111@gmail.com", 
+        "name": "Sceiiya Test", 
+        "phone": null, "tax_exempt": 
+        "none", "tax_ids": [] 
+    }, 
+    "customer_email": null, 
+    "expires_at": 1691381532, 
+    "invoice": null, 
+    "invoice_creation": { 
+        "enabled": false, 
+        "invoice_data": { 
+            "account_tax_ids": null, 
+            "custom_fields": null, 
+            "description": null, 
+            "footer": null, 
+            "metadata": [], 
+            "rendering_options": null
+         } 
+    }, 
+    "livemode": false, 
+    "locale": null, 
+    "metadata": [], 
+    "mode": "payment", 
+    "payment_intent": "pi_3NbyKbL8I9KZnlz60QKO67KC",
+    "payment_link": null, 
+    "payment_method_collection": "always", 
+    "payment_method_options": [], 
+    "payment_method_types": [ "card" ], 
+    "payment_status": "paid", 
+    "phone_number_collection": { "enabled": false }, 
+    "recovered_from": null, 
+    "setup_intent": null, 
+    "shipping_address_collection": null, 
+    "shipping_cost": null, 
+    "shipping_details": null, 
+    "shipping_options": [], 
+    "status": "complete", 
+    "submit_type": null, 
+    "subscription": null, 
+    "success_url": "http:\/\/192.168.100.4:8000\/success?session_id={CHECKOUT_SESSION_ID}", 
+    "total_details": { "amount_discount": 0, "amount_shipping": 0, "amount_tax": 0 }, "url": null 
+}
