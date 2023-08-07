@@ -19,8 +19,7 @@ class ProductController extends Controller
 
     public function checkout()
     {
-        $secret_key = env('STRIPE_SECRET');
-        Stripe::setApiKey($secret_key);
+        Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $products = Product::all();
         $lineItems = [];
@@ -78,8 +77,10 @@ class ProductController extends Controller
             if (!$order) {
                 throw new NotFoundHttpException();
             }
-            $order->status = 'paid';
-            $order->save();
+            if ($order && $order->status === 'unpaid') {
+                $order->status = 'paid';
+                $order->save();
+            }
 
             return view('product.checkout.success', compact('customer'));
     
@@ -132,7 +133,16 @@ class ProductController extends Controller
         switch ($event->type) {
         //   case 'payment_intent.succeeded':
             case 'checkout.session.completed':
-            $paymentIntent = $event->data->object;
+            $session = $event->data->object;
+            $sessionId = $session->id;
+
+             // $order = Order::where('session_id', $session->id)->get();
+             $order = Order::where('session_id', $session->id)->first();
+             if ($order && $order->status === 'unpaid') {
+                $order->status = 'paid';
+                $order->save();   
+                //send email to customer
+             }
           // ... handle other event types
           default:
             echo 'Received unknown event type ' . $event->type;
