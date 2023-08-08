@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -91,6 +92,24 @@ class ProductController extends Controller
 
     public function cancel(Request $request)
     {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $sessionId = $request->get('session_id');
+        
+        $session = Session::retrieve($sessionId);   
+            if(!$session) {
+                throw new NotFoundHttpException();
+            }
+    
+            // $customer = Customer::retrieve($session->customer);
+            $customer = $session->customer_details;
+            $data = ['name' => $customer->name];
+
+        Mail::send('payment.cancel', $data, function($message) use ($customer)
+        {
+            $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Cancelled');
+            $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+        });
         return view('product.checkout.cancel');
     }
 
@@ -141,6 +160,19 @@ class ProductController extends Controller
              if ($order && $order->status === 'unpaid') {
                 $order->status = 'paid';
                 $order->save();   
+
+        
+                $sessionRet = Session::retrieve($sessionId);   
+            
+                // $customer = Customer::retrieve($session->customer);
+                $customer = $sessionRet->customer_details;
+                $data = ['name' => $customer->name];
+    
+                Mail::send('payment.success', $data, function($message) use ($customer)
+                {
+                    $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Succeeded');
+                    $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+                });
                 //send email to customer
              }
           // ... handle other event types
