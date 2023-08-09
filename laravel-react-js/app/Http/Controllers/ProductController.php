@@ -78,15 +78,26 @@ class ProductController extends Controller
             if (!$order) {
                 throw new NotFoundHttpException();
             }
+
             if ($order && $order->status === 'unpaid') {
                 $order->status = 'paid';
                 $order->save();
-            }
+            }            
+            // $customer = Customer::retrieve($session->customer);
+            $customer = $session->customer_details;
+            $data = ['name' => $customer->name];
+
+            Mail::send('payment.success', $data, function($message) use ($customer)
+            {
+                $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Succeeded');
+                $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+            });
 
             return view('product.checkout.success', compact('customer'));
     
         } catch (\Throwable $th) {
-            throw new NotFoundHttpException();
+            echo $th;
+            // throw new NotFoundHttpException();
         }
     }
 
@@ -161,7 +172,7 @@ class ProductController extends Controller
                 $order->status = 'paid';
                 $order->save();   
 
-        
+                //send email to customer\
                 $sessionRet = Session::retrieve($sessionId);   
             
                 // $customer = Customer::retrieve($session->customer);
@@ -173,7 +184,6 @@ class ProductController extends Controller
                     $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Succeeded');
                     $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
                 });
-                //send email to customer
              }
           // ... handle other event types
           default:
@@ -185,3 +195,4 @@ class ProductController extends Controller
     }
 
 }
+
