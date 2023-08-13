@@ -1,0 +1,23 @@
+.meg{
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.marg{
+    margin: 20px 0 20px 0;
+    height: 80px;
+}
+
+.sectionated{
+    background-color: rgb(97, 11, 11);
+    height: 80px;
+    width: min(calc(80% - 2rem), 60rem);
+    margin-inline: auto;
+}
+
+.full-bleed{
+    box-shadow: 0 0 0 100vmax rgb(97, 11, 11);
+    clip-path: inset(0 -100vmax)
+}
