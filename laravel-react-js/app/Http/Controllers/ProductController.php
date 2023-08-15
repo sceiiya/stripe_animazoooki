@@ -96,7 +96,6 @@ class ProductController extends Controller
             return view('product.checkout.success', compact('customer'));
     
         } catch (\Throwable $th) {
-            echo $th;
             throw new NotFoundHttpException();
         }
     }
