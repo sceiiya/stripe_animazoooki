@@ -87,17 +87,17 @@ class ProductController extends Controller
             $customer = $session->customer_details;
             $data = ['name' => $customer->name];
 
-            Mail::send('payment.success', $data, function($message) use ($customer)
-            {
-                $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Succeeded');
-                $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
-            });
+            // Mail::send('payment.success', $data, function($message) use ($customer)
+            // {
+            //     $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Succeeded');
+            //     $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+            // });
 
             return view('product.checkout.success', compact('customer'));
     
         } catch (\Throwable $th) {
             echo $th;
-            // throw new NotFoundHttpException();
+            throw new NotFoundHttpException();
         }
     }
 
@@ -179,11 +179,11 @@ class ProductController extends Controller
                 $customer = $sessionRet->customer_details;
                 $data = ['name' => $customer->name];
     
-                Mail::send('payment.success', $data, function($message) use ($customer)
-                {
-                    $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Succeeded');
-                    $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
-                });
+                // Mail::send('payment.success', $data, function($message) use ($customer)
+                // {
+                //     $message->to($customer->email, $customer->name)->subject(env('APP_NAME').' | Payment Succeeded');
+                //     $message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+                // });
              }
           // ... handle other event types
           default:
