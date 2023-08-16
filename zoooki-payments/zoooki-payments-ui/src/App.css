@@ -1,3 +1,26 @@
+:root{
+    --mainColor: rgb(97, 11, 11);
+    --zoookiColor: #a7000a;
+    --mainBlue: #a3c0f9;
+    --mainPink: #fbb8de;
+    --mainBG: #f6ddd6;
+    --mainDark: #171720;
+    --mainSupDark: #4b5168;
+
+    --moco: #ff83ca;
+    --mococo: #f7a8cb;
+
+    --fuwa: #2988f7;
+    --fuwawa: #67b3ff;
+
+    --bij: #4A41E0;
+    --bijoo: #6E5BF4;
+}
+
+*{
+    /* remove comment for easier element detecction for responsitivity debugging  */
+    background-color: #6d5bf41c;
+}
 .meg{
     justify-content: center;
     align-items: center;
@@ -10,14 +33,23 @@
     height: 80px;
 }
 
+.heroSection{
+    background-color: var(--mainBlue);
+    /* height: 80px; */
+    width: 100%;
+    /* width: min(calc(80% - 2rem), 60rem); */
+    margin-inline: auto;
+}
+
 .sectionated{
-    background-color: rgb(97, 11, 11);
-    height: 80px;
-    width: min(calc(80% - 2rem), 60rem);
+    background-color: var(--mainBlue);
+    /* height: 80px; */
+    max-width: 850px;
+    /* width: min(calc(80% - 2rem), 60rem); */
     margin-inline: auto;
 }
 
 .full-bleed{
-    box-shadow: 0 0 0 100vmax rgb(97, 11, 11);
+    box-shadow: 0 0 0 100vmax var(--mainBlue);
     clip-path: inset(0 -100vmax)
 }
